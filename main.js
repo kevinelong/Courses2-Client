@@ -10,6 +10,7 @@ function draw(data){ //RENDER
         `;
     })
 }
+
 function editById(id, name){
     editItemId.value = id;
     editItemTitle.value = name;
@@ -70,8 +71,7 @@ function deleteById(id) {
 }
 
 document.addEventListener("DOMContentLoaded", e => {
-    read() //before
-    // create() //call others when don
+    read() //Show All Immediately
 
     saveButton.addEventListener("click", e=>{
         create(newItemTitle.value);
