@@ -1,23 +1,36 @@
+function draw(data){ //RENDER
+    cardList.innerHTML = ""; //clear
+    data.forEach(item=>{
+        cardList.innerHTML += `
+            <div class="card">
+                <button onclick="deleteById(${item.id})">X</button>
+                ${item.courseName}
+                <button onclick="editById(${item.id}, '${item.courseName}')">/</button>
+            </div>
+        `;
+    })
+}
+function editById(id, name){
+    editItemId.value = id;
+    editItemTitle.value = name;
+}
 
 function read() {
     console.log("READ")
     // GET EXAMPLE
     fetch("http://localhost:8081/api/courses")
         .then(r => r.json())
-        .then(data => {
-            data.forEach(item => console.log(JSON.stringify(item, 0, 4)));
-            console.log("END READ/GET")
-        });
+        .then(draw);
 }
 
 // POST AKA CREATE
-function create() {
+function create(title) {
     console.log("CREATE")
     const item = {
         // "id": 17, //NOT REQUIRED FOR *NEW* ITEMS
         "dept": "CompSci",
         "courseNum": "401",
-        "courseName": "INTRO TO AJAX API REST CRUD",
+        "courseName": title,
         "instructor": "Kevin Long",
         "startDate": "Dec 4",
         "numDays": 5
@@ -27,20 +40,14 @@ function create() {
         method: "POST", // CREATE
         headers: { "Content-type": "application/json" },
         body: JSON.stringify(item)
-    }).then(r => r.json()).then(
-        item => {
-            console.log(JSON.stringify(item, 0, 4), "CREATED")
-            //immediately update
-            updateById(item.id)
-        }
-    );
+    }).then(r => r.json()).then(read);
 }
 
-function updateById(id) {
+function updateById(id, courseName) {
     console.log("UPDATE id =", id)
     // PUT AKA UPDATE
     const item = {
-        "instructor": "Kevin Ernest Long" //NO ID
+        "courseName": courseName //NO ID
     }
 
     fetch("http://localhost:8081/api/courses/" + id, {
@@ -50,13 +57,7 @@ function updateById(id) {
         },
         body: JSON.stringify(item)
     })
-        .then(
-            r => {
-                console.log(r.status, "UPDATE")
-                //then delete
-                deleteById(id)
-            }
-        );
+        .then(read);
     //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
 }
 
@@ -65,8 +66,19 @@ function deleteById(id) {
     // DELETE AKA DELETE
     fetch("http://localhost:8081/api/courses/" + id, {
         method: "DELETE", // DELETE
-    }).then(r => console.log(r.status, "DELETE", id)); //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
+    }).then(read); //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
 }
 
-read() //before
-create() //call others when don
+document.addEventListener("DOMContentLoaded", e => {
+    read() //before
+    // create() //call others when don
+
+    saveButton.addEventListener("click", e=>{
+        create(newItemTitle.value);
+    });
+
+    saveEditButton.addEventListener("click", e=>{
+        updateById(editItemId.value, editItemTitle.value);
+    });
+    
+});//END LOADED
