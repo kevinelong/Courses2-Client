@@ -37,6 +37,7 @@ function create() {
 }
 
 function updateById(id) {
+    console.log("UPDATE id =", id)
     // PUT AKA UPDATE
     const item = {
         "instructor": "Kevin Ernest Long" //NO ID
@@ -53,17 +54,18 @@ function updateById(id) {
             r => {
                 console.log(r.status, "UPDATE")
                 //then delete
-                deleteById(item.id)
+                deleteById(id)
             }
         );
     //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
 }
 
 function deleteById(id) {
+    console.log("DELETE id =", id)
     // DELETE AKA DELETE
     fetch("http://localhost:8081/api/courses/" + id, {
         method: "DELETE", // DELETE
-    }).then(r => console.log(r.status, "DELETE")); //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
+    }).then(r => console.log(r.status, "DELETE", id)); //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
 }
 
 read() //before
