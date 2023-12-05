@@ -1,19 +1,18 @@
+const byIdReverse = (a, b) => b.id - a.id;
+const buttonComponent = (onclick, name) => `<button onclick="${onclick}"> ${name} </button>`;
+
+function cardComponent(item) {
+    return `<div class="card">` +
+        buttonComponent(`deleteById(${item.id})`, "X") +
+        buttonComponent(`editById(${item.id}, '${item.courseName}')`, item.courseName) +
+        `</div>`;
+}
+
 function draw(data) { //RENDER
     //PUT LATEST DATA IN LOCAL STORAGE
     localStorage.cachedData = JSON.stringify(data);
-
-    cardList.innerHTML = ""; //clear
-    data.forEach(item => {
-        cardList.innerHTML += `
-            <div class="card">
-                <button onclick="deleteById(${item.id})"> X </button>
-    
-                <button onclick="editById(${item.id}, '${item.courseName}')">
-                    ${item.courseName}
-                </button>
-            </div>
-        `;
-    })
+    //sort and add all items to the card list
+    cardList.innerHTML = data.sort(byIdReverse).map(cardComponent).join("");
 }
 
 function editById(id, name) {
@@ -22,21 +21,18 @@ function editById(id, name) {
 }
 
 function read() {
-    console.log("READ")
-    // GET EXAMPLE
-    fetch("http://localhost:8081/api/courses")
+    fetch("http://localhost:8081/api/courses", { method: "GET" })
         .then(r => r.json())
         .then(draw);
 }
 
 // POST AKA CREATE
 function create(title) {
-    console.log("CREATE")
     const item = {
-        // "id": 17, //NOT REQUIRED FOR *NEW* ITEMS
+        "courseName": title,
+        //// "id": 17, //NOT REQUIRED FOR *NEW* ITEMS
         "dept": "CompSci",
         "courseNum": "401",
-        "courseName": title,
         "instructor": "Kevin Long",
         "startDate": "Dec 4",
         "numDays": 5
@@ -50,42 +46,36 @@ function create(title) {
 }
 
 function updateById(id, courseName) {
-    console.log("UPDATE id =", id)
-    // PUT AKA UPDATE
-    const item = {
-        "courseName": courseName //NO ID
-    }
-
+    const item = { "courseName": courseName };//NO ID
     fetch("http://localhost:8081/api/courses/" + id, {
         method: "PUT", // UPDATE
         headers: { "Content-type": "application/json" },
         body: JSON.stringify(item)
-    })
-        .then(read);
-    //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
+    }).then(read);
 }
 
 function deleteById(id) {
-    console.log("DELETE id =", id)
-    // DELETE AKA DELETE
-    fetch("http://localhost:8081/api/courses/" + id, {
-        method: "DELETE", // DELETE
-    }).then(read); //NOTE NO JSON RESPONSE IS ECHOED BY OUT IN THIS CASE
+    fetch("http://localhost:8081/api/courses/" + id, { method: "DELETE" }).then(read); 
 }
 
 document.addEventListener("DOMContentLoaded", e => {
-    if(localStorage.cachedData == undefined){
+    if (localStorage.cachedData == undefined) {
         read()//GET        
-    }else{
+    } else {
         draw(JSON.parse(localStorage.cachedData))
     }
 
-    saveButton.addEventListener("click", e => {
-        create(newItemTitle.value);
+    saveEditButton.addEventListener("click", e => {
+        if (editItemId.value == "") {
+            create(editItemTitle.value)
+        } else {
+            updateById(editItemId.value, editItemTitle.value);
+        }
     });
 
-    saveEditButton.addEventListener("click", e => {
-        updateById(editItemId.value, editItemTitle.value);
-    });
+    newItemButton.addEventListener("click", e => {
+        editItemId.value = "";
+        editItemTitle.value = "";
+    })
 
 });//END LOADED
