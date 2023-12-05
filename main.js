@@ -1,17 +1,22 @@
-function draw(data){ //RENDER
+function draw(data) { //RENDER
+    //PUT LATEST DATA IN LOCAL STORAGE
+    localStorage.cachedData = JSON.stringify(data);
+
     cardList.innerHTML = ""; //clear
-    data.forEach(item=>{
+    data.forEach(item => {
         cardList.innerHTML += `
             <div class="card">
-                <button onclick="deleteById(${item.id})">X</button>
-                ${item.courseName}
-                <button onclick="editById(${item.id}, '${item.courseName}')">/</button>
+                <button onclick="deleteById(${item.id})"> X </button>
+    
+                <button onclick="editById(${item.id}, '${item.courseName}')">
+                    ${item.courseName}
+                </button>
             </div>
         `;
     })
 }
 
-function editById(id, name){
+function editById(id, name) {
     editItemId.value = id;
     editItemTitle.value = name;
 }
@@ -53,9 +58,7 @@ function updateById(id, courseName) {
 
     fetch("http://localhost:8081/api/courses/" + id, {
         method: "PUT", // UPDATE
-        headers: {
-            "Content-type": "application/json"
-        },
+        headers: { "Content-type": "application/json" },
         body: JSON.stringify(item)
     })
         .then(read);
@@ -71,14 +74,18 @@ function deleteById(id) {
 }
 
 document.addEventListener("DOMContentLoaded", e => {
-    read() //Show All Immediately
+    if(localStorage.cachedData == undefined){
+        read()//GET        
+    }else{
+        draw(JSON.parse(localStorage.cachedData))
+    }
 
-    saveButton.addEventListener("click", e=>{
+    saveButton.addEventListener("click", e => {
         create(newItemTitle.value);
     });
 
-    saveEditButton.addEventListener("click", e=>{
+    saveEditButton.addEventListener("click", e => {
         updateById(editItemId.value, editItemTitle.value);
     });
-    
+
 });//END LOADED
