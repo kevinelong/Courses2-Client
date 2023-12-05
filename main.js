@@ -1,9 +1,9 @@
 const byIdReverse = (a, b) => b.id - a.id;
-const buttonComponent = (onclick, name) => `<button onclick="${onclick}"> ${name} </button>`;
+const buttonComponent = (onclick, name, type="primary") => `<button onclick="${onclick}" class="btn btn-${type}"> ${name} </button>`;
 
 function cardComponent(item) {
     return `<div class="card">` +
-        buttonComponent(`deleteById(${item.id})`, "X") +
+        buttonComponent(`deleteById(${item.id})`, "X", "danger") +
         buttonComponent(`editById(${item.id}, '${item.courseName}')`, item.courseName) +
         `</div>`;
 }
@@ -65,17 +65,19 @@ document.addEventListener("DOMContentLoaded", e => {
         draw(JSON.parse(localStorage.cachedData))
     }
 
+    function clear(){
+        editItemId.value = "";
+        editItemTitle.value = "";
+    }
     saveEditButton.addEventListener("click", e => {
         if (editItemId.value == "") {
             create(editItemTitle.value)
         } else {
             updateById(editItemId.value, editItemTitle.value);
         }
+        clear();
     });
 
-    newItemButton.addEventListener("click", e => {
-        editItemId.value = "";
-        editItemTitle.value = "";
-    })
+    newItemButton.addEventListener("click", clear);
 
 });//END LOADED

@@ -8,10 +8,14 @@
     <h1>Edit Item</h1>
     <div id="newItem">
         <input id="editItemId" type="hidden" value="">
-        <input id="editItemTitle" value="">
-        <button id="saveEditButton"> Save </button>
+        <label>
+            <input id="editItemTitle" value="" " class="form-control" placeholder="Enter Title Text">
+            <button id="saveEditButton" class="btn btn-primary"> Save </button>    
+        </label>
     </div>
-    <button id="newItemButton"> New Item </button>
+    <hr>
+    <button id="newItemButton" class="btn btn-success"> New Item </button>
+    <hr>
     <h1>Existing Items:</h1>
     <div id="cardList"></div>
 </body>
