@@ -1,7 +1,6 @@
 .card{
     margin: 0 1em 1em 0;
-    width: 100px; 
-    width:fit-content;
+    width: 300px; 
     display: inline-block;
 }
 .card button{

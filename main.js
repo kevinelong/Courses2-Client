@@ -21,7 +21,8 @@ function editById(id, name) {
 }
 
 function read() {
-    fetch("http://localhost:8081/api/courses", { method: "GET" })
+    clear(); //CLEAR INPUTS
+    fetch("http://localhost:8081/api/courses", { method: "GET" }) //DEFAULT
         .then(r => r.json())
         .then(draw);
 }
@@ -71,11 +72,10 @@ document.addEventListener("DOMContentLoaded", e => {
     }
     saveEditButton.addEventListener("click", e => {
         if (editItemId.value == "") {
-            create(editItemTitle.value)
+            create(editItemTitle.value);//POST
         } else {
-            updateById(editItemId.value, editItemTitle.value);
+            updateById(editItemId.value, editItemTitle.value);//PUT
         }
-        clear();
     });
 
     newItemButton.addEventListener("click", clear);
